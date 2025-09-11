@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Regions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Regions Overview</h2>
+    <a href="#" class="btn btn-primary">Add New Region</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Region ID</th>
+            <th>Region Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>North America</td>
+            <td>
+                <button class="btn btn-info btn-sm">Details</button>
+                <button class="btn btn-danger btn-sm">Delete</button>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Europe</td>
+            <td>
+                <button class="btn btn-info btn-sm">Details</button>
+                <button class="btn btn-danger btn-sm">Delete</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
