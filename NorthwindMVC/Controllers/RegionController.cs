@@ -38,27 +38,98 @@ namespace NorthwindMVC.Controllers
         }
 
         [HttpPost]
-        public JsonResult UpdateRegion(int RegionId , string RegionDescription)
+        public JsonResult UpdateRegion(int RegionId, string RegionDescription)
         {
+            if (string.IsNullOrWhiteSpace(RegionDescription))
+            {
+                return Json(new { success = false, message = "Region Description cannot be empty" });
+            }
+
             var region = db.Regions.FirstOrDefault(r => r.RegionID == RegionId);
             if (region != null)
             {
-                region.RegionDescription = RegionDescription;
-                try
+                string newDescription = RegionDescription.Trim();
+                string currentDescription = region.RegionDescription.Trim();
+
+                if (currentDescription != newDescription)
                 {
-                    db.SaveChanges();
-                    return Json(new { success = true, message = "Region updated successfully" });
+                    region.RegionDescription = newDescription;
+                    try
+                    {
+                        db.SaveChanges();
+                        return Json(new { success = true, message = "Region updated successfully" });
+                    }
+                    catch (Exception ex)
+                    {
+                        return Json(new { success = false, message = ex.Message });
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    return Json(new { success = false, message = ex.Message });
-                };
+                    return Json(new { success = false, message = "No changes detected" });
+                }
             }
             else
             {
                 return Json(new { success = false, message = "Region not found" });
             }
-
         }
+
+
+
+        [HttpPost]
+        public JsonResult AddRegion(string RegionDescription)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(RegionDescription))
+                {
+                    return Json(new { success = false, message = "Description is required" });
+                }
+
+                var newRegion = new Region
+                {
+                    RegionDescription = RegionDescription.Trim()
+                };
+
+                db.Regions.Add(newRegion);
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Region added successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+
+
+
+        //[HttpPost]
+        //public JsonResult DeleteRegion(int id)
+        //{
+        //    try
+        //    {
+        //        var region = db.Regions.FirstOrDefault(r => r.RegionID == id);
+        //        if (region != null)
+        //        {
+        //            db.Regions.Remove(region);
+        //            db.SaveChanges();
+        //            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            return Json(new { success = false, message = "Region not found." }, JsonRequestBehavior.AllowGet);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false, message = "Error: " + ex.Message }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+
+
+
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿$(document).on('click', '.edit-btn', function () {
     var regionId = $(this).data('id');
-    console.log("Edit clicked for RegionID:", regionId);
+    
 
     $.ajax({
         url: '/Region/GetRegion',
@@ -24,31 +24,36 @@
     });
 });
 
-$('#saveEditBtn').click(function () {
-    var regionData = {
-        RegionId: $('#editRegionId').val(),
-        RegionDescription: $('#editRegionDescription').val()
-    };
+$(document).ready(function () {
+    $("#saveEditBtn").click(function () {
+        var regionId = $("#editRegionId").val();
+        var description = $("#editRegionDescription").val().trim();
 
-    $.ajax({
-        url: '/Region/UpdateRegion',
-        type: 'POST',
-        data: regionData,
-        success: function (response) {
-            if (response.success) {
-                alert("Region updated successfully!");
-
-                var myModalEl = document.getElementById('editRegionModal');
-                var modal = bootstrap.Modal.getInstance(myModalEl);
-                modal.hide();
-
-                location.reload();
-            } else {
-                alert("Something went wrong!");
-            }
-        },
-        error: function () {
-            alert("Error while saving changes!");
+        if (description=="") {
+            alert("Region Description cannot be empty");
+            return;
         }
+
+        $.ajax({
+            url: '/Region/UpdateRegion',
+            type: 'POST',
+            data: { RegionId: regionId, RegionDescription: description },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function () {
+                alert("An error occurred while updating the region.");
+            }
+        });
     });
 });
+
+
+
+
+
