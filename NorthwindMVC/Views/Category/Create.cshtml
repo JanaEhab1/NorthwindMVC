@@ -1,0 +1,57 @@
+﻿@model NorthwindMVC.Models.Category
+
+
+@{
+    ViewBag.Title = "Create Category (AJAX)";
+}
+
+<h2>Create Category</h2>
+
+<form id="createForm">
+    <div class="form-group">
+        @Html.LabelFor(m => m.CategoryName)
+        @Html.TextBoxFor(m => m.CategoryName, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.addCategoryDescription)
+        @Html.TextBoxFor(m => m.addCategoryDescription, new { @class = "form-control" })
+    </div>
+
+    <button type="submit" class="btn btn-success">Add</button>
+    @Html.ActionLink("Back", "Index", null, new { @class = "btn btn-secondary" })
+</form>
+
+<div id="createResult" class="mt-3"></div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+    $("#saveAddBtn").click(function () {
+        var description = $("#addCategoryDescription").val();
+
+        if (!description.trim()) {
+            alert("Category Description is required");
+            return;
+        }
+
+        $.ajax({
+            url: '/Category/AddCategory',
+            type: 'POST',
+            data: { CategoryDescription: description },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function () {
+                alert("An error occurred while adding the Category.");
+            }
+        });
+    });
+});
+    </script>
+}

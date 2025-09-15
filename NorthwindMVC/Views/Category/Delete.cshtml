@@ -1,0 +1,11 @@
+﻿@model NorthwindMVC.Models.Category
+
+<h2>Delete Category</h2>
+<p>Are you sure you want to delete <b>@Model.CategoryName</b>?</p>
+
+@using (Html.BeginForm("DeleteConfirmed", "Categories", new { id = Model.CategoryID }, FormMethod.Post))
+{
+<button type="submit">Delete</button>
+}
+<p>@Html.ActionLink("Cancel", "Index")</p>
+

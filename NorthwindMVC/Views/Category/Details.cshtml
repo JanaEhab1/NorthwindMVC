@@ -1,0 +1,12 @@
+﻿@model NorthwindMVC.Models.Category
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<p>Name: @Model.CategoryName</p>
+<p>Description: @Model.Description</p>
+<button>@Html.ActionLink("Back", "Index")</button>
+
