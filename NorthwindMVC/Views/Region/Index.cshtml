@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<NorthwindMVC.Models.Region>
+
+@{
     ViewBag.Title = "Regions";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -6,7 +8,11 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Regions Overview</h2>
-    <a href="#" class="btn btn-primary">Add New Region</a>
+    <button type="button" class="btn btn-outline-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+        </svg>Add Region
+    </button>
 </div>
 
 <table class="table">
@@ -18,22 +24,99 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>1</td>
-            <td>North America</td>
-            <td>
-                <button class="btn btn-info btn-sm">Details</button>
-                <button class="btn btn-danger btn-sm">Delete</button>
-            </td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Europe</td>
-            <td>
-                <button class="btn btn-info btn-sm">Details</button>
-                <button class="btn btn-danger btn-sm">Delete</button>
-            </td>
-        </tr>
+        @foreach (var region in Model)
+        {
+            <tr>
+                <td>@region.RegionID</td>
+                <td>@region.RegionDescription</td>
+                <td>
+
+
+                    <button type="button" class="edit-btn" data-id="@region.RegionID" style="background:none; border:none; padding:0; cursor:pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                             fill="currentColor" viewBox="0 0 16 16">
+                            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1
+                 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059
+                 2.059L4.854 14.854a.5.5 0 0
+                 1-.233.131l-4 1a.5.5 0 0
+                 1-.606-.606l1-4a.5.5 0 0
+                 1 .131-.232l9.642-9.642a.5.5 0 0
+                 0-.642.056L6.854 4.854a.5.5 0 1
+                 1-.708-.708L9.44.854A1.5 1.5
+                 0 0 1 11.5.796a1.5 1.5 0 0
+                 1 1.998-.001m-.644.766a.5.5 0 0
+                 0-.707 0L1.95 11.756l-.764
+                 3.057 3.057-.764L14.44
+                 3.854a.5.5 0 0 0 0-.708z" />
+                        </svg>
+                    </button>
+
+
+
+                    <button class="btn p-0 border-0 bg-transparent" title="Delete">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                             class="bi bi-trash3" viewBox="0 0 16 16">
+                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1
+               a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5
+               1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0
+               0 5 1.5v1H1.5a.5.5 0 0 0 0
+               1h.538l.853 10.66A2 2 0 0 0
+               4.885 16h6.23a2 2 0 0 0
+               1.994-1.84l.853-10.66h.538a.5.5
+               0 0 0 0-1zm1.958 1-.846
+               10.58a1 1 0 0 1-.997.92h-6.23a1
+               1 0 0 1-.997-.92L3.042
+               3.5zm-7.487 1a.5.5 0 0
+               1 .528.47l.5 8.5a.5.5 0 0
+               1-.998.06L5 5.03a.5.5 0 0
+               1 .47-.53Zm5.058 0a.5.5 0 0
+               1 .47.53l-.5 8.5a.5.5 0 1
+               1-.998-.06l.5-8.5a.5.5 0 0
+               1 .528-.47M8 4.5a.5.5 0 0
+               1 .5.5v8.5a.5.5 0 0 1-1
+               0V5a.5.5 0 0 1 .5-.5" />
+                        </svg>
+                    </button>
+
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<div class="modal fade" id="editRegionModal" tabindex="-1" aria-labelledby="editRegionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editRegionModalLabel">Edit Region</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editRegionForm">
+                    <input type="hidden" id="editRegionId" name="RegionID" />
+
+                    <div class="mb-3">
+                        <label for="editRegionDescription" class="form-label">Region Description</label>
+                        <input type="text" class="form-control" id="editRegionDescription" name="RegionDescription" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="saveEditBtn" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.js"></script>
+    <script src="~/Scripts/region-edit.js"></script>
+}
+
+
+
+
+
 
