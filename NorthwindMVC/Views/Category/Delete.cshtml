@@ -1,11 +1,43 @@
 ﻿@model NorthwindMVC.Models.Category
-
-<h2>Delete Category</h2>
-<p>Are you sure you want to delete <b>@Model.CategoryName</b>?</p>
-
-@using (Html.BeginForm("DeleteConfirmed", "Categories", new { id = Model.CategoryID }, FormMethod.Post))
-{
-<button type="submit">Delete</button>
+@{
+    Layout = null;
 }
-<p>@Html.ActionLink("Cancel", "Index")</p>
+<h2>Delete</h2>
+
+<p>Are you sure you want to delete <strong>@Model.CategoryName</strong>?</p>
+
+<form id="deleteForm">
+    <input type="hidden" name="CategoryID" value="@Model.CategoryID" />
+    <div id="deleteError" class="text-danger"></div>
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Action("Index")" class="btn btn-primary">Back</a>
+</form>
+
+<script>
+
+$("#deleteForm").submit(function (e) {
+   
+
+    $.ajax({
+        url: '@Url.Action("DeleteConfirmed", "Category")',
+        type: "POST",
+        data: $(this).serialize(),
+        success: function (res) {
+            if (res.success) {
+            
+                $("#row-" + res.id).fadeOut(500, function () { $(this).remove(); });
+        
+                $("#mainModal").modal("hide");
+                location.reload();
+            } else {
+                $("#deleteError").text(res.message);
+            }
+        },
+        error: function () {
+            $("#deleteError").text("Something went wrong.");
+        }
+    });
+});
+</script>
+
 

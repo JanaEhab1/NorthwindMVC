@@ -1,4 +1,8 @@
 ﻿@model NorthwindMVC.Models.Category
+@{
+    Layout = null;
+}
+
 
 @{
     ViewBag.Title = "Details";
@@ -8,5 +12,7 @@
 
 <p>Name: @Model.CategoryName</p>
 <p>Description: @Model.Description</p>
-<button>@Html.ActionLink("Back", "Index")</button>
+
+
+<a href="@Url.Action("Index")" class="btn btn-primary">Back</a>
 

@@ -2,92 +2,47 @@
 
 <h2>Categories</h2>
 
-<p>
-    <!-- Simple Create Form -->
-    <form id="createForm">
-        <input type="text" name="CategoryName" placeholder="Name" />
-        <input type="text" name="Description" placeholder="Description" />
-        <button type="submit">Add</button>
-    </form>
-</p>
+<button class="btn btn-primary" onclick="openModal('@Url.Action("Create","Category")')">Create New</button>
 
-<table class="table" >
+<table class="table table-striped">
     <thead>
-        <tr><th>ID</th><th>Name</th><th>Description</th><th>Actions</th></tr>
+        <tr><th>ID</th><th>Name</th><th>Description</th><th></th></tr>
     </thead>
     <tbody>
-        @foreach (var c in Model)
+        @foreach (var cat in Model)
     {
-        <tr data-id="@c.CategoryID">
-            <td>@c.CategoryID</td>
-            <td class="cat-name">@c.CategoryName</td>
-            <td class="cat-desc">@c.Description</td>
+        <tr>
+            <td>@cat.CategoryID</td>
+            <td>@cat.CategoryName</td>
+            <td>@cat.Description</td>
             <td>
-                <button class="btn-details" data-id="@c.CategoryID">Details</button>
-                <button class="btn-edit" data-id="@c.CategoryID">Edit</button>
-                <button class="btn-delete" data-id="@c.CategoryID">Delete</button>
+                <button class="btn btn-primary" onclick="openModal('@Url.Action("Details","Category", new { id=cat.CategoryID })')">Details</button>
+                <button class="btn btn-primary" onclick="openModal('@Url.Action("Edit","Category", new { id=cat.CategoryID })')">Edit</button>
+                <button class="btn btn-primary"onclick="openModal('@Url.Action("Delete","Category", new { id = cat.CategoryID })')">Delete</button>
+
             </td>
         </tr>
     }
     </tbody>
 </table>
 
-<div id="result"></div>
+<!-- Modal Shell -->
+<div class="modal fade" id="mainModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @*<div class="modal-header"><h5 class="modal-title">Action</h5></div>*@
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+</div>
 
 @section scripts {
-    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
     <script>
-        // CREATE
-        $("#createForm").submit(function (e) {
-            e.preventDefault();
-            $.post('@Url.Action("Create")', $(this).serialize(), function (res) {
-                if (res.success) {
-                    $("#result").html(" Added: " + res.name);
-                    location.reload(); // reload table for simplicity
-                }
+        function openModal(url) {
+            $.get(url, function (html) {
+                $("#modalBody").html(html);
+                $("#mainModal").modal("show");
             });
-        });
-
-        // DETAILS
-        $(".btn-details").click(function () {
-            var id = $(this).data("id");
-            $.get('@Url.Action("Details")', { id: id }, function (res) {
-                if (res.success) {
-                    alert("ID: " + res.id + "\nName: " + res.name + "\nDesc: " + res.desc);
-                }
-            });
-        });
-
-        // EDIT
-        $(".btn-edit").click(function () {
-            var row = $(this).closest("tr");
-            var id = $(this).data("id");
-            var newName = prompt("New Name:", row.find(".cat-name").text());
-            var newDesc = prompt("New Description:", row.find(".cat-desc").text());
-
-            $.post('@Url.Action("Edit")',
-                { CategoryID: id, CategoryName: newName, Description: newDesc },
-                function (res) {
-                    if (res.success) {
-                        row.find(".cat-name").text(newName);
-                        row.find(".cat-desc").text(newDesc);
-                        $("#result").html(" Updated ID " + id);
-                    }
-                });
-        });
-
-        // DELETE
-        $(".btn-delete").click(function () {
-            if (!confirm("Are you sure?")) return;
-            var row = $(this).closest("tr");
-            var id = $(this).data("id");
-
-            $.post('@Url.Action("Delete")', { id: id }, function (res) {
-                if (res.success) {
-                    row.remove();
-                    $("#result").html(" Deleted ID " + id);
-                }
-            });
-        });
+        }
     </script>
 }
