@@ -8,9 +8,7 @@
         data: { id: regionId },
         success: function (response) {
            
-            if (response.success) {
-                $('#editRegionId').val(response.data.RegionID);
-                $('#editRegionDescription').val(response.data.RegionDescription);
+            if (response.success) { 
 
                 var myModal = new bootstrap.Modal(document.getElementById('editRegionModal'));
                 myModal.show();

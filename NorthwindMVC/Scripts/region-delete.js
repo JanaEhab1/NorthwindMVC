@@ -1,30 +1,23 @@
-﻿//$(document).on('click', '.delete-btn', function () {
-//    var regionId = $(this).data('id');
-//    console.log("Delete button clicked for region:", regionId);
+﻿$(document).on('click', '.delete-btn', function () {
+    var regionId = $(this).data('id');
 
+    if (confirm("Are you sure you want to delete this region?")) {
+        $.ajax({
+            url: '/Region/DeleteRegion',
+            type: 'POST',
+            data: { id: regionId },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
 
-
-
-//    if (confirm("Are you sure you want to delete this region?")) {
-//        $.ajax({
-//            url: '/Region/DeleteRegion',
-//            type: 'POST',
-//            data: { id: regionId },
-//            traditional: true,
-//            success: function (response) {
-//                console.log("Response:", response);
-//                if (response.success) {
-//                    alert("Region deleted successfully!");
-//                    location.reload();
-//                } else {
-//                    alert(response.message || "Something went wrong!");
-//                }
-//            },
-//            error: function (xhr, status, error) {
-//                console.error("Delete failed:", xhr.status, xhr.responseText);
-//                alert("Error while deleting region!");
-//            }
-//        });
-
-//    }
-//});
+                    $("button[data-id='" + regionId + "']").closest("tr").remove();
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function () {
+                alert("An error occurred while trying to delete the region.");
+            }
+        });
+    }
+});

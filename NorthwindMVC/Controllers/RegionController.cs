@@ -51,22 +51,29 @@ namespace NorthwindMVC.Controllers
                 string newDescription = RegionDescription.Trim();
                 string currentDescription = region.RegionDescription.Trim();
 
-                if (currentDescription != newDescription)
-                {
-                    region.RegionDescription = newDescription;
-                    try
-                    {
-                        db.SaveChanges();
-                        return Json(new { success = true, message = "Region updated successfully" });
-                    }
-                    catch (Exception ex)
-                    {
-                        return Json(new { success = false, message = ex.Message });
-                    }
-                }
-                else
+                if (currentDescription.Equals(newDescription, StringComparison.OrdinalIgnoreCase))
                 {
                     return Json(new { success = false, message = "No changes detected" });
+                }
+
+                bool exists = db.Regions.Any(r =>
+                    r.RegionID != RegionId &&
+                    r.RegionDescription.Trim().ToLower() == newDescription.ToLower());
+
+                if (exists)
+                {
+                    return Json(new { success = false, message = "A region with this name already exists." });
+                }
+
+                region.RegionDescription = newDescription;
+                try
+                {
+                    db.SaveChanges();
+                    return Json(new { success = true, message = "Region updated successfully" });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
                 }
             }
             else
@@ -74,6 +81,7 @@ namespace NorthwindMVC.Controllers
                 return Json(new { success = false, message = "Region not found" });
             }
         }
+
 
 
 
@@ -87,9 +95,17 @@ namespace NorthwindMVC.Controllers
                     return Json(new { success = false, message = "Description is required" });
                 }
 
+                string trimmedDescription = RegionDescription.Trim();
+
+                bool exists = db.Regions.Any(r => r.RegionDescription.Trim().ToLower() == trimmedDescription.ToLower());
+                if (exists)
+                {
+                    return Json(new { success = false, message = "A region with this name already exists." });
+                }
+
                 var newRegion = new Region
                 {
-                    RegionDescription = RegionDescription.Trim()
+                    RegionDescription = trimmedDescription
                 };
 
                 db.Regions.Add(newRegion);
@@ -105,28 +121,35 @@ namespace NorthwindMVC.Controllers
 
 
 
-        //[HttpPost]
-        //public JsonResult DeleteRegion(int id)
-        //{
-        //    try
-        //    {
-        //        var region = db.Regions.FirstOrDefault(r => r.RegionID == id);
-        //        if (region != null)
-        //        {
-        //            db.Regions.Remove(region);
-        //            db.SaveChanges();
-        //            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        //        }
-        //        else
-        //        {
-        //            return Json(new { success = false, message = "Region not found." }, JsonRequestBehavior.AllowGet);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false, message = "Error: " + ex.Message }, JsonRequestBehavior.AllowGet);
-        //    }
-        //}
+
+        [HttpPost]
+        public JsonResult DeleteRegion(int id)
+        {
+            try
+            {
+                var region = db.Regions.FirstOrDefault(r => r.RegionID == id);
+                if (region == null)
+                {
+                    return Json(new { success = false, message = "Region not found." });
+                }
+
+                bool hasTerritories = db.Territories.Any(t => t.RegionID == id);
+                if (hasTerritories)
+                {
+                    return Json(new { success = false, message = "You cannot delete this region because it has related territories." });
+                }
+
+                db.Regions.Remove(region);
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Region deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+
 
 
 
