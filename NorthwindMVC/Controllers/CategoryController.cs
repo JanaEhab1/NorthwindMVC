@@ -102,7 +102,7 @@ namespace NorthwindMVC.Controllers
             db.Categories.Remove(cat);
             db.SaveChanges();
 
-            return Json(new { success = true });
+            return Json(new { success = true, id = CategoryID });
         }
 
 

@@ -27,7 +27,6 @@ $("#deleteForm").submit(function (e) {
             
                 $("#row-" + res.id).fadeOut(500, function () { $(this).remove(); });
         
-                $("#mainModal").modal("hide");
                 location.reload();
             } else {
                 $("#deleteError").text(res.message);
